@@ -1,4 +1,4 @@
-module Shape
+module Shapes
 
 "Abstract type to represent geometric shapes"
 abstract type Shape end
