@@ -2,5 +2,6 @@
 module PBRT
 
 include("core/geometry.jl")
+include("shape/shape.jl")
 
 end # module

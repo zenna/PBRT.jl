@@ -1,24 +1,60 @@
 
 # Bounds #
-struct Bounds{T <: Point}
+"Axis aligned bounding box in interval representation"
+struct Bounds{N, T <: Point}
   pmin::T
   pmax::T
 end
 
-surfacearea(Bounds) = 0
-volume(::Bounds) = 0
+"Initialize a Bounds3 to enclose a single point:" 
+Bounds(p::Point) = Bounds(p, p)
+
+"Smallest bounds encapsulating `p1` and `p2`"
+Bounds(p1, p2) = Bounds(min.(p1, p2), max.(p1, p2))
+
+"coordinates of `i`th eight corners of the bounding box `b`"
+corner(b::Bounds, i) = # fox,e
+
+union(b::Bounds, p::Point) = Bounds(min.(b.pmin, p), max.(b.pmax, p))
+
+union(b1::Bounds, b2::Bounds) = Bounds(min.(b1.pmin, b2.pmin), max.(b1.pmax, b2.pmax))
+
+intersect(b1::Bounds, b2::Bounds) = error("todo")
+
+"Vector along the box diagonal from the minimum point to the maximum point."
+diagonal(b::Bounds) = b.pmax - b.pmin
+
+function surfacearea(b::Bounds)
+  d = diagonal(b)
+  2 * (d.x * d.y + d.x * d.z + d.y * d.z)
+end
+
+volume(b::Bounds) = (d = diagonal(b); d.x * d.y * d.z) 
 
 "Index of which of the three axes is longest. This is useful, for example, when deciding which axis to subdivide when building some of the ray-intersection acceleration structures."
-maximumextend() = 0
+
+"The index of which of the three axes is longest."
+function maximumextent(b::Bounds)
+  d = diagonal(b)
+  if d.x > d.y && d.x > d.z
+    1
+  elseif d.y > d.z
+    2
+  else
+    3
+  end
+end
 
 "linearly interpolates between the corners of the box by the given amount in each dimension."
-lerp(::Bounds, ::Point) = 0
+lerp(b::Bounds, t::Point) = Point(lerp(t.x, b.pmin.x, b.pmax.x),
+                                  lerp(t.x, b.pmin.x, b.pmax.x),
+                                  lerp(t.x, b.pmin.x, b.pmax.x))
 
 "Continuous position of a point relative to the corners of the box, where a point at the minimum corner has offset , a point at the maximum corner has offset , and so forth."
-offset(::Bounds, ::Point) = 0
+offset(::Bounds, ::Point) = error("todo")
 
 "Sphere that bounds `b`"
-boundingsphere(::Bounds) = 0
+boundingsphere(::Bounds) = error("todo")
 
 
 
